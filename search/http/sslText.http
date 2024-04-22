@@ -1,0 +1,7 @@
+### 测试https证书
+POST https://localhost:8443/search
+Content-Type: application/json
+
+{
+  "name": "末日"
+}

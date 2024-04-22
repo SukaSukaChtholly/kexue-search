@@ -1,0 +1,29 @@
+<configuration>
+
+    <!-- 定义日志文件的输出路径和文件名 -->
+    <property name="LOG_DIR" value="../logs/search" />
+    <property name="APP_NAME" value="search" />
+    <property name="LOG_FILE" value="${LOG_DIR}/${APP_NAME}.log" />
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+     <!-- 文件输出 -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_FILE}</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 日志级别设置为INFO -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
+
+</configuration>

@@ -1,0 +1,35 @@
+server:
+  port: 8081
+
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql:///crawl
+    username: root
+    password: kexuejia
+    hikari:
+      # 连接池中允许的最小连接数。缺省值：10
+      minimum-idle: 10
+      # 连接池中允许的最大连接数。缺省值：10
+      maximum-pool-size: 100
+      # 自动提交
+      auto-commit: true
+      # 一个连接idle状态的最大时长（毫秒），超时则被释放（retired），缺省:10分钟
+      idle-timeout: 600
+      # 连接池名字
+      pool-name: customHikariCP
+      # 一 个连接的生命时长（毫秒），超时而且没被使用则被释放（retired），缺省:30分钟，建议设置比数据库超时时长少30秒
+      max-lifetime: 1800000
+      # 等待连接池分配连接的最大时长（毫秒），超过这个时长还没可用的连接则发生SQLException， 缺省:30秒
+      connection-timeout: 30000
+
+# 异步任务线程池配置参数
+task:
+  pool:
+    corePoolSize: 10 # 设置核心线程数
+    maxPoolSize: 20  # 设置最大线程数
+    keepAliveTime: 300 # 设置空闲线程存活时间（秒）
+    queueCapacity: 100 # 设置队列容量
+    threadNamePrefix: "gblfy-signpolicy-asynnotify-" # 设置线程名称前缀
+    awaitTerminationSeconds: 60 #  设置线程池等待终止时间(秒)
