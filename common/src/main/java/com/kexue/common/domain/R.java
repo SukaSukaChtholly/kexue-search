@@ -1,4 +1,6 @@
-package com.kexue.search.common;
+package com.kexue.common.domain;
+
+import com.kexue.common.constant.Constants;
 
 import java.io.Serializable;
 

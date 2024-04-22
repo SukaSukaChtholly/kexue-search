@@ -1,4 +1,4 @@
-package com.kexue.search.common;
+package com.kexue.common.constant;
 
 
 public class Constants {
