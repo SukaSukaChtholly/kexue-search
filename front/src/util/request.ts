@@ -3,7 +3,7 @@ import router from "../router";
 
 
 const _axios = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_API_BASE_URL,
+  baseURL: /* import.meta.env.VITE_BACKEND_API_BASE_URL +  */'/api',
   // timeout: 10000
 })
 
@@ -22,7 +22,7 @@ _axios.interceptors.request.use(
 export default _axios;
 _axios.interceptors.response.use(
   (response) => {
-    let result = response.data;
+    const result = response.data;
     /* 服务器错误，返回首页 */
     if (result.code === 500) {
       console.log(result.msg);
@@ -32,7 +32,7 @@ _axios.interceptors.response.use(
     return result;
   },
   (error) => {
-    console.log(error)
-    return Promise.reject(error)
+    console.log(error);
+    return Promise.reject(error);
   }
 )

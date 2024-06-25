@@ -7,7 +7,7 @@ const anime: AnimeQto = { name: '' }
 
 function handleSearch() {
   const name = anime.name;
-  if (name === '' || name === undefined || name === null) {
+  if (!name) {
     alert("请输入动漫名称！");
     return;
   }
@@ -16,7 +16,7 @@ function handleSearch() {
 
   /* 跳转至查询展示页 */
   localStorage.removeItem("animePage");
-  router.push(`/list`);
+  router.push(`/vod/list`);
 }
 
 </script>

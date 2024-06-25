@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     public R handleServiceException(ServiceException e) {
         log.error(e.getMessage(), e);
         System.out.println(StrUtil.format("捕获业务异常：{}", e));
-        return R.fail(e.getMessage());
+        return R.fail(null, e.getMessage());
     }
 
     @ResponseBody
@@ -28,6 +28,6 @@ public class GlobalExceptionHandler {
         String requestURI = request.getRequestURI();
         log.error("请求地址'[{}]'，发生系统异常：[{}]", requestURI, e);
         System.out.println(StrUtil.format("捕获系统异常：{}", e));
-        return R.fail(e.getMessage());
+        return R.fail(null, e.getMessage());
     }
 }

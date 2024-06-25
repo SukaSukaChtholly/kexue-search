@@ -17,7 +17,7 @@ public class LogAspect {
     
 
     @Around("@annotation(controllerLog)")
-    public Object doAround(ProceedingJoinPoint joinPoint, Log controllerLog) throws Throwable {
+    public Object doAround(ProceedingJoinPoint joinPoint, Log controllerLog) {
 
         String ip = IpUtils.getIpAddr(ServletUtils.getRequest());
         String methodInfo = controllerLog.info();
@@ -30,7 +30,12 @@ public class LogAspect {
         log.info("[{} start], 方法名->[{}#{}], IP->[{}], 请求参数->[{}],",
                 methodInfo, className, methodName, ip, args);
 
-        Object resp = joinPoint.proceed();
+        Object resp = null;
+        try {
+            resp = joinPoint.proceed();
+        } catch (Throwable e) {
+            log.error("异常信息：[{}]", e.getMessage());
+        }
 
         long endTime = System.currentTimeMillis();
 

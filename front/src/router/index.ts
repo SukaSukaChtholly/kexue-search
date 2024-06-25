@@ -9,8 +9,18 @@ const router = createRouter({
       component: () => import('@/views/index.vue')
     },
     {
-      path: '/list',
-      component: () => import('@/views/list.vue')
+      path: '/vod',
+      component: () => import('@/views/vod.vue'),
+      children: [
+        {
+          path: 'list',
+          component: () => import('@/views/list.vue')
+        },
+        {
+          path: 'detail/:id',
+          component: () => import('@/views/detail.vue')
+        }
+      ]
     },
     {
       path: '/player',

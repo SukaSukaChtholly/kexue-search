@@ -4,6 +4,7 @@ package com.kexue.search.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.kexue.common.domain.BaseModel;
 import com.kexue.common.domain.PageInfo;
@@ -11,11 +12,13 @@ import com.kexue.common.util.DictUtils;
 import com.kexue.common.util.PageUtils;
 import com.kexue.search.domain.Anime;
 import com.kexue.search.domain.AnimeType;
+import com.kexue.search.domain.Play;
 import com.kexue.search.domain.to.AnimeQto;
 import com.kexue.search.domain.vo.AnimeVo;
 import com.kexue.search.exception.ServiceException;
 import com.kexue.search.service.SearchService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
@@ -42,6 +45,14 @@ public class SearchServiceImpl implements SearchService {
         }
 
         return null;
+    }
+
+    @Override
+    public List<Play> getPlay(Long animeId) {
+        Assert.notNull(animeId,"播放列表不存在！");
+        return new Play().selectList(new LambdaQueryWrapper<Play>()
+                .eq(Play::getAnimeId, animeId)
+                .orderByDesc(Play::getUpdateTime));
     }
 
     private PageInfo<AnimeVo> searchByType(String type, Long pageNum, Long pageSize) {

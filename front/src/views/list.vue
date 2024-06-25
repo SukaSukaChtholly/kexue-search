@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reqSearch } from "@/api/searchApi";
+import router from "@/router";
 import { useAnimeQto } from "@/store/animeList";
 import { AnimeQto, AnimeVo, PageInfo } from "@/util/type";
 import { storeToRefs } from "pinia";
@@ -12,7 +13,7 @@ let count = ref(0);
 
 let animeListStore = useAnimeQto();
 let { animeQto } = storeToRefs(animeListStore);
-let searchName = '';
+
 let condition = ref('');
 
 let animeList = ref<AnimeVo[]>([]);
@@ -21,7 +22,9 @@ onMounted(() => {
   const localAnimePage = localStorage.getItem("animePage");
   const localAnimeQto = localStorage.getItem("animeQto");
 
-  animeQto.value = JSON.parse(localAnimeQto ?? '');
+  if (localAnimeQto) {
+    animeQto.value = JSON.parse(localAnimeQto ?? '');
+  }
   setCondition(animeQto.value);
   document.title = `“${condition.value}”搜索结果 - ${webName}`;
   if (localAnimePage !== null) {
@@ -32,41 +35,47 @@ onMounted(() => {
   }
 
   search(animeQto.value);
-
 })
 
 function getWhenChange() {
   search(animeQto.value);
 }
 
-function handleSearch(name?: string, type?: string) {
-  animeQto.value.name = name ?? '';
+function handleSearch(type?: string) {
+  animeQto.value.name = '';
   animeQto.value.type = type ?? '';
-  /* 将搜索框置空 */
-  searchName = '';
   /* 重新定位到第一页 */
   animeQto.value.pageNum = 1;
+
   search(animeQto.value);
 }
+
 
 async function search(animeQto: AnimeQto) {
   isLoading.value = true;
   /* 回到最顶端 */
   window.scrollTo(0, 0);
+  try {
+    const { data } = await reqSearch(animeQto);
+    if (!data) return;
+    setCondition(animeQto);
+    animeQto.pageNum = data.pageNum;
+    animeQto.pageSize = data.pageSize;
 
-  const { data } = await reqSearch(animeQto);
-  setCondition(animeQto);
-  animeQto.pageNum = data.pageNum;
-  animeQto.pageSize = data.pageSize;
+    animeList.value = data.records;
+    count = ref(data.total);
 
-  animeList.value = data.records;
-  count = ref(data.total);
+    setLocalCache(data);
+    /* 修改标题 */
+    document.title = `“${condition.value}”搜索结果 - ${webName}`;
+  } finally {
+    isLoading.value = false;
+  }
 
-  setLocalCache(data);
-  /* 修改标题 */
-  document.title = `“${condition.value}”搜索结果 - ${webName}`;
-  isLoading.value = false;
+}
 
+function getDetail(id: number) {
+  router.push(`/vod/detail/${id}`)
 }
 
 function setCondition(animeQto: AnimeQto) {
@@ -88,57 +97,37 @@ function clearLocalCache() {
 
 
 <template>
-  <div class="container min-height-vh">
-    <div class="header">
-      <div class="title">
-        <a href="/" :title="webName">{{ webName }}</a>
+  <ul class="main">
+    <VueSpinner class="loading" v-if="isLoading" />
+    <div class="totalCount">搜索到与“{{ condition }}”相关的动漫有“{{ count ?? 0 }}”条</div>
+    <li class="data-info" v-for="item of animeList" :key="item.id">
+      <a @click="getDetail(item.id ?? 0)">
+        <img class="data-img img-error" referrerpolicy="no-referrer" :src="item.image" :alt="item.name"></a>
+      <div class="data-content">
+        <h4>
+          <a @click="getDetail(item.id ?? 0)">{{ item.name }}</a>
+        </h4>
+        <ul>
+          <li> <span>{{ item.latest }}</span></li>
+          <li class="item-type"> <span>类型：<a href="#" @click.prevent="handleSearch(t)" v-for="t of item.type ">{{
+            t
+          }}</a></span>
+          </li>
+          <li>
+            <span>简介：{{ item.info }}</span>
+          </li>
+          <li><a class="to-info" @click="getDetail(item.id ?? 0)">查看详情</a></li>
+        </ul>
       </div>
-      <div class="sform">
-        <input id="search" type="text" v-model="searchName" @keyup.enter="handleSearch(searchName)" />
-        <input id="submit" type="submit" value="搜索" @click="handleSearch(searchName)" />
-      </div>
-    </div>
-    <div class="content">
-      <ul class="main">
-        <VueSpinner class="loading" v-if="isLoading" />
-        <div class="totalCount">搜索到与“{{ condition }}”相关的动漫有“{{ count ?? 0 }}”条</div>
-        <li class="data-info" v-for="item of animeList" :key="item.id">
-          <a :href="item.link">
-            <img class="data-img img-error" referrerpolicy="no-referrer" :src="item.image" :alt="item.name"></a>
-          <div class="data-content">
-            <h4>
-              <a :href="item.link" :title="item.name">{{ item.name }}</a>
-            </h4>
-            <ul>
-              <li> <span>
-                  <font color="red">{{ item.latest }}</font>
-                </span></li>
-              <li class="item-type"> <span>类型：<a href="#" @click.prevent="handleSearch('', t)"
-                    v-for="t of item.type ">{{ t
-                    }}</a></span>
-
-              </li>
-              <li>
-                <span>简介：{{ item.info }}</span>
-              </li>
-              <li><a class="to-info" :href="item.link">查看详情</a></li>
-            </ul>
-          </div>
-        </li>
-        <el-pagination background prev-text="上一页" next-text="下一页" :total="count" :page-size="animeQto.pageSize"
-          v-model:current-page="animeQto.pageNum" @current-change="getWhenChange" layout="prev, pager, next, jumper" />
-      </ul>
-    </div>
-  </div>
-  <div class="footer">
-    <p>本网站提供的资源均系收集于各大视频网站，本网站只提供web页面服务，并不提供影片资源存储，也不参与录制、上传</p>
-    <p>若本站收录的节目无意侵犯了贵司版权，请给网页底部邮箱地址来信，我会及时处理和回复，谢谢</p>
-    <p>邮箱：123@qq.com</p>
-  </div>
-
+    </li>
+    <el-pagination background prev-text="上一页" next-text="下一页" :total="count" :page-size="animeQto.pageSize"
+      v-model:current-page="animeQto.pageNum" @current-change="getWhenChange" layout="prev, pager, next, jumper" />
+  </ul>
 </template>
 
 <style scoped>
+@import '@/assets/styles/reset.css';
+
 :deep(li.is-active) {
   background-image: linear-gradient(45deg, skyblue, rgb(236, 51, 51), skyblue);
 }
@@ -170,6 +159,10 @@ function clearLocalCache() {
   margin-left: .625rem;
 }
 
+.item-type a:first-child {
+  margin: 0;
+}
+
 .totalCount {
   font-size: 1.25rem;
   margin: 1.25rem 0;
@@ -180,6 +173,7 @@ function clearLocalCache() {
   width: 6.25rem;
   height: 2.5rem;
   border: .0625rem solid transparent;
+  color: black;
   border-radius: .3125rem;
   background-image: linear-gradient(45deg, skyblue, rgb(236, 51, 51), skyblue);
   text-decoration: none;
@@ -199,7 +193,6 @@ function clearLocalCache() {
   margin: 0;
   padding-left: .9375rem;
   font-size: 1.375rem;
-
 }
 
 .data-content ul {
@@ -269,25 +262,7 @@ function clearLocalCache() {
   overflow: hidden;
 }
 
-.content {
-  width: 100%;
-  margin: 0 auto;
-  padding-top: 3.75rem;
-  overflow: hidden;
-}
 
-.title {
-  width: 8rem;
-  font-size: 1.875rem;
-  margin-top: .6rem;
-  white-space: nowrap;
-  justify-content: center;
-}
-
-.title a {
-  color: skyblue;
-  text-decoration: none;
-}
 
 #submit {
   width: 5rem;
@@ -310,51 +285,7 @@ function clearLocalCache() {
   margin-right: .5rem;
 }
 
-.sform {
-  height: 100%;
-  display: flex;
-  flex: 0, 1, 18.75rem;
-  justify-content: center;
-  align-items: center;
-}
 
-.header {
-  width: 100%;
-  height: 3.75rem;
-  display: flex;
-  /* flex: 1; */
-  justify-content: center;
-  position: fixed;
-  z-index: 999;
-  background-color: white;
-}
-
-
-.container {
-  display: flex;
-  flex-direction: column;
-  background-image: url('@/assets/images/keduoli-kaochuang.jpg');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-}
-
-.footer {
-  font-family: 宋体;
-  border-radius: .3125rem;
-  text-align: center;
-  font-size: .9375rem;
-  background-color: skyblue;
-}
-
-.footer p {
-  line-height: 2em;
-  margin: 0;
-}
-
-.min-height-vh {
-  min-height: 100vh;
-}
 
 @media screen and (max-width: 768px) {
   .item-type a {

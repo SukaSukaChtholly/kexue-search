@@ -16,6 +16,16 @@ export interface AnimeVo {
   image?: string,
 }
 
+export interface Play {
+  id?: number,
+  /* 动漫集数 */
+  episode?: number,
+  /* 播放链接 */
+  link?: string,
+  /* 动漫id */
+  animeId?: number
+}
+
 /* 分页类型 */
 export interface PageInfo<T> {
   records: T[],
