@@ -1,8 +1,11 @@
 package com.kexue.crawl.job;
 
 
+import com.kexue.crawl.downloader.PlaywrightDownloader;
+import com.kexue.crawl.pipeline.AgeAnimePipeline;
 import com.kexue.crawl.pipeline.AnimePipeline;
 import com.kexue.crawl.pipeline.TypePipeline;
+import com.kexue.crawl.processor.AgeAnimeProcessor;
 import com.kexue.crawl.processor.AnimeProcessor;
 import com.kexue.crawl.processor.TypeProcessor;
 import org.springframework.stereotype.Component;
@@ -15,6 +18,9 @@ public class AnimeJob {
 
     @Resource
     private AnimePipeline animePipeline;
+    
+    @Resource
+    private AgeAnimePipeline ageAnimePipeline;
 
     @Resource
     private TypePipeline typePipeline;
@@ -24,7 +30,7 @@ public class AnimeJob {
      * 风车动漫爬取
      */
 //    @Scheduled(cron = "0 */30 * * * *")
-    public void AnimeProcess() {
+    public void fcAnimeProcess() {
 //        HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
 //        httpClientDownloader
 //                .setProxyProvider(SimpleProxyProvider.from(new Proxy("127.0.0.1", 8800)));
@@ -47,6 +53,20 @@ public class AnimeJob {
                 .addUrl("https://www.dm530w.org/list/")
                 .thread(10)
                 .addPipeline(typePipeline)
+                .run();
+    }
+
+    /**
+     * age动漫爬取
+     */
+//    @Scheduled(cron = "0 */30 * * * *")
+    public void ageAnimeProcess() {
+        Spider.create(new AgeAnimeProcessor())
+                // 从最近更新开始爬取
+                .addUrl("https://api.agedm.org/v2/update?page=1&size=30")
+                .thread(1)
+                .addPipeline(ageAnimePipeline)
+                .setDownloader(new PlaywrightDownloader())
                 .run();
     }
 

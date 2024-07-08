@@ -18,8 +18,13 @@ class CrawlApplicationTests {
     }
 
     @Test
-    void testAnime() {
-        animeJob.AnimeProcess();
+    void testFcAnime() {
+        animeJob.fcAnimeProcess();
+    }
+    
+    @Test
+    void testAgeAnime() {
+        animeJob.ageAnimeProcess();
     }
 
 }

@@ -2,11 +2,10 @@
 import { reqSearch } from "@/api/searchApi";
 import router from "@/router";
 import { useAnimeQto } from "@/store/animeList";
+import { setTitle } from "@/util/commonUtils";
 import { AnimeQto, AnimeVo, PageInfo } from "@/util/type";
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
-
-const webName = import.meta.env.VITE_API_WEB_NAME;
 
 let isLoading = ref(false);
 let count = ref(0);
@@ -26,11 +25,11 @@ onMounted(() => {
     animeQto.value = JSON.parse(localAnimeQto ?? '');
   }
   setCondition(animeQto.value);
-  document.title = `“${condition.value}”搜索结果 - ${webName}`;
+  setTitle(`“${condition.value}”搜索结果`);
   if (localAnimePage !== null) {
     let { total, records } = JSON.parse(localAnimePage);
     animeList.value = records;
-    count = total;
+    count.value = +total;
     return;
   }
 
@@ -59,15 +58,15 @@ async function search(animeQto: AnimeQto) {
     const { data } = await reqSearch(animeQto);
     if (!data) return;
     setCondition(animeQto);
-    animeQto.pageNum = data.pageNum;
-    animeQto.pageSize = data.pageSize;
+    animeQto.pageNum = +data.pageNum;
+    animeQto.pageSize = +data.pageSize;
 
     animeList.value = data.records;
-    count = ref(data.total);
+    count.value = +data.total;
 
     setLocalCache(data);
     /* 修改标题 */
-    document.title = `“${condition.value}”搜索结果 - ${webName}`;
+    setTitle(`“${condition.value}”搜索结果`);
   } finally {
     isLoading.value = false;
   }
@@ -75,7 +74,8 @@ async function search(animeQto: AnimeQto) {
 }
 
 function getDetail(id: number) {
-  router.push(`/vod/detail/${id}`)
+  localStorage.removeItem('playList');
+  router.push(`/vod/detail/${id}/info`)
 }
 
 function setCondition(animeQto: AnimeQto) {
@@ -98,7 +98,7 @@ function clearLocalCache() {
 
 <template>
   <ul class="main">
-    <VueSpinner class="loading" v-if="isLoading" />
+    <VueSpinner class="loading" v-show="isLoading" />
     <div class="totalCount">搜索到与“{{ condition }}”相关的动漫有“{{ count ?? 0 }}”条</div>
     <li class="data-info" v-for="item of animeList" :key="item.id">
       <a @click="getDetail(item.id ?? 0)">
@@ -254,8 +254,7 @@ function clearLocalCache() {
 
 .main {
   width: 75rem;
-  margin: 0 auto;
-  margin-top: 1.25rem;
+  margin: 1.25rem auto;
   padding-right: 2.5rem;
   background-color: white;
   border-radius: .625rem;

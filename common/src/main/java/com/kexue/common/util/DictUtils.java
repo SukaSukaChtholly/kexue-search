@@ -29,7 +29,7 @@ public class DictUtils {
      * @param code
      * @return name
      */
-    public static String getCodeDictCache(Integer code) {
+    public static String getTypeDictCache(Integer code) {
         return AppCacheService.get(code);
     }
 
@@ -38,7 +38,7 @@ public class DictUtils {
             return Collections.emptySet();
         }
 
-        return codes.stream().map(DictUtils::getCodeDictCache).collect(Collectors.toSet());
+        return codes.stream().map(DictUtils::getTypeDictCache).collect(Collectors.toSet());
     }
 
     public static Set<Integer> getCodesDictCache(Set<String> names) {

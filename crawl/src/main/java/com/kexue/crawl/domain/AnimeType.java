@@ -15,13 +15,14 @@ public class AnimeType extends BaseModel<AnimeType> {
     private Integer code;
     private Long animeId;
 
+    @Override
     public boolean insert() {
 
         AnimeType animeType = selectOne(new LambdaQueryWrapper<AnimeType>()
                 .eq(AnimeType::getAnimeId, this.getAnimeId())
                 .eq(AnimeType::getCode, this.code));
 
-        if (Objects.nonNull(animeType)) return true;
+        if (Objects.nonNull(animeType)) return false;
 
         return super.insert();
     }

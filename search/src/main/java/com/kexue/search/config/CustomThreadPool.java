@@ -1,4 +1,4 @@
-package com.kexue.crawl.config;
+package com.kexue.search.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,18 +14,18 @@ public class CustomThreadPool {
 
     @Autowired
     private TaskThreadPoolConfig config;
-    
+
     @Bean("customAsyncThreadPool")
     public Executor customAsyncThreadPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        //线程池名的前缀
-        executor.setThreadNamePrefix(config.getThreadNamePrefix());
         //最大线程数
         executor.setMaxPoolSize(config.getMaxPoolSize());
         //核心线程数
         executor.setCorePoolSize(config.getCorePoolSize());
         //任务队列的大小
         executor.setQueueCapacity(config.getQueueCapacity());
+        //线程池名的前缀
+        executor.setThreadNamePrefix(config.getThreadNamePrefix());
         //允许线程的空闲时间30秒
         executor.setKeepAliveSeconds(config.getKeepAliveSeconds());
         //设置线程池关闭的时候等待所有任务都完成再继续销毁其他的Bean

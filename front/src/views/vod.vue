@@ -127,9 +127,11 @@ function clearLocalCache() {
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  position: relative;
 }
 
 .footer {
+  width: 100%;
   font-family: 宋体;
   border-radius: .3125rem;
   text-align: center;

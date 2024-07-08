@@ -13,9 +13,10 @@
 
     <properties>
         <webmagic.version>0.10.0</webmagic.version>
+        <playwright.version>1.40.0</playwright.version>
     </properties>
 
-
+                
     <dependencies>
 
         <dependency>
@@ -25,9 +26,20 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>us.codecraft</groupId>
             <artifactId>webmagic-core</artifactId>
             <version>${webmagic.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -35,6 +47,13 @@
             <artifactId>webmagic-extension</artifactId>
             <version>${webmagic.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

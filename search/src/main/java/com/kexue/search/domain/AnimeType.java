@@ -41,7 +41,9 @@ public class AnimeType extends BaseModel<AnimeType> {
         return selectPage(
                 PageUtils.startPage(pageNum, pageSize),
                 new LambdaQueryWrapper<AnimeType>()
-                        .eq(AnimeType::getCode, DictUtils.getCodeDictCache(type)));
+                        .eq(AnimeType::getCode, DictUtils.getCodeDictCache(type))
+                        // 排除风车动漫
+                        .gt(AnimeType::getAnimeId, 1781255715571126274L));
 
     }
 

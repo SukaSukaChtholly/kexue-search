@@ -34,7 +34,7 @@ public class LogAspect {
         try {
             resp = joinPoint.proceed();
         } catch (Throwable e) {
-            log.error("异常信息：[{}]", e.getMessage());
+            log.error("异常信息->[{}]", e.getMessage(), e);
         }
 
         long endTime = System.currentTimeMillis();

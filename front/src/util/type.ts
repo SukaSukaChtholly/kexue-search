@@ -6,6 +6,8 @@ export interface AnimeVo {
   name?: string,
   /* 最新集数 */
   latest?: string,
+  /* 首播时间 */
+  showTime?: string,
   /* 类型 */
   type?: string[],
   /* 链接 */
@@ -16,10 +18,14 @@ export interface AnimeVo {
   image?: string,
 }
 
-export interface Play {
+export interface Video {
   id?: number,
+  /* 动漫名称 */
+  name?: string,
   /* 动漫集数 */
-  episode?: number,
+  episode?: string,
+  /* 视频资源序列 */
+  number?: number,
   /* 播放链接 */
   link?: string,
   /* 动漫id */
@@ -29,9 +35,9 @@ export interface Play {
 /* 分页类型 */
 export interface PageInfo<T> {
   records: T[],
-  pageNum: number,
-  pageSize: number,
-  total: number
+  pageNum: string,
+  pageSize: string,
+  total: string
 }
 
 /* 动漫搜索请求类型 */
@@ -45,6 +51,11 @@ export interface PageParam {
   pageSize?: number
 }
 
+export interface RespOne<T> {
+  code: number,
+  data: T,
+  msg: string
+}
 
 export interface RespList<T> {
   code: number,

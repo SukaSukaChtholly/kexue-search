@@ -3,7 +3,7 @@ import router from "../router";
 
 
 const _axios = axios.create({
-  baseURL: /* import.meta.env.VITE_BACKEND_API_BASE_URL +  */'/api',
+  baseURL: /* import.meta.env.VITE_BACKEND_API_BASE_URL + */ '/api',
   // timeout: 10000
 })
 

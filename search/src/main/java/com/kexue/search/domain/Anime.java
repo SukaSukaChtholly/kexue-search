@@ -36,16 +36,20 @@ public class Anime extends BaseModel<Anime> {
         return new Anime().selectPage(
                 PageUtils.startPage(pageNum, pageSize),
                 new LambdaQueryWrapper<Anime>()
-                        .like(Anime::getName, name)
-                        .or()
-                        .like(Anime::getAlias, name)
+                        .eq(Anime::getSource, "age动漫")
+                        .and(wrapper -> wrapper
+                                .like(Anime::getName, name)
+                                .or()
+                                .like(Anime::getAlias, name))
                         .orderByDesc(Anime::getSource));
     }
 
 
     public List<Anime> selectByIds(Set<Long> ids) {
         ArrayList<Anime> animes = new ArrayList<>();
-        ids.forEach(id -> animes.add(selectById(id)));
+        ids.forEach(id -> animes.add(selectOne(new LambdaQueryWrapper<Anime>()
+                .eq(BaseModel::getId, id)
+                .eq(Anime::getSource, "age动漫"))));
         return animes;
     }
 }

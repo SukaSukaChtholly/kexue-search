@@ -3,7 +3,7 @@ package com.kexue.search.controller;
 import com.kexue.common.domain.PageInfo;
 import com.kexue.common.domain.R;
 import com.kexue.common.log.annotation.Log;
-import com.kexue.search.domain.Play;
+import com.kexue.search.domain.Video;
 import com.kexue.search.domain.to.AnimeQto;
 import com.kexue.search.domain.vo.AnimeVo;
 import com.kexue.search.service.SearchService;
@@ -29,9 +29,18 @@ public class SearchController {
     }
     
     @Log(info = "getPlay方法")
-    @GetMapping("/getPlay")
-    public R<List<Play>> getPlay(Long animeId) {
-        return R.ok(searchService.getPlay(animeId));
+    @GetMapping("/getPlayList")
+    public R<List<Video>> getPlayList(Long animeId) {
+        return R.ok(searchService.getPlayList(animeId));
     }
+    
+    @Log(info = "getVideo方法")
+    @GetMapping("/getVideo")
+    public R<Video> getVideo(Long animeId, Integer number) {
+        
+        return R.ok(searchService.getVideo(animeId, number));
+    }
+    
+    
 }
 

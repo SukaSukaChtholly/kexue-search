@@ -3,6 +3,8 @@ server:
 
 
 spring:
+  application:
+    name: crawl-service
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql:///crawl
@@ -27,9 +29,9 @@ spring:
 # 异步任务线程池配置参数
 task:
   pool:
+    threadNamePrefix: custom-Async-ThreadPool- # 设置线程名称前缀
     corePoolSize: 10 # 设置核心线程数
     maxPoolSize: 20  # 设置最大线程数
     keepAliveTime: 300 # 设置空闲线程存活时间（秒）
     queueCapacity: 100 # 设置队列容量
-    threadNamePrefix: "gblfy-signpolicy-asynnotify-" # 设置线程名称前缀
     awaitTerminationSeconds: 60 #  设置线程池等待终止时间(秒)

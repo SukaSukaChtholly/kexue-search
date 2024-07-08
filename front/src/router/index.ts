@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
-
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
@@ -18,13 +17,19 @@ const router = createRouter({
         },
         {
           path: 'detail/:id',
-          component: () => import('@/views/detail.vue')
+          component: () => import('@/views/detail.vue'),
+          children: [
+            {
+              path: 'player/:number',
+              component: () => import('@/views/player.vue')
+            },
+            {
+              path: 'info',
+              component: () => import('@/views/info.vue')
+            }
+          ]
         }
       ]
-    },
-    {
-      path: '/player',
-      component: () => import('@/views/player.vue')
     },
     {
       path: '/error',
